@@ -1,5 +1,3 @@
-require 'combinatorics/list_comprehension'
-
 module Wordlist
   class Mutator
 
@@ -27,8 +25,27 @@ module Wordlist
     #   The match text to mutate.
     #
     def initialize(pattern,substitute=nil,&block)
-      @pattern = pattern
+      @pattern = unless pattern.kind_of?(Regexp)
+                   Regexp.compile(Regexp.escape(pattern))
+                 else
+                   pattern
+                 end
+
       @substitute = (substitute || block)
+    end
+
+    def matches(word)
+      matches = []
+      index = 0
+
+      while (match = word.match(@pattern,index))
+        i,j = match.offset(0)
+
+        matches << [i, j-i]
+        index = j
+      end
+
+      return matches
     end
 
     #
@@ -57,41 +74,6 @@ module Wordlist
     end
 
     #
-    # Explodes a word into an Array of possible substitutions.
-    #
-    # @param [String] word
-    #   The word to explode.
-    #
-    # @return [Array<Array, String>]
-    #   The Array of possible substitutions.
-    #
-    # @since 0.2.0
-    #
-    def explode(word)
-      fragments = []
-      prev = 0
-
-      word.scan(@pattern) do |match|
-        index = word.index(match,prev)
-        length = match.length
-
-        if index > prev
-          fragments << word[prev, (index-prev)]
-        end
-
-        fragment = word[index, length]
-        fragments << [fragment, replace(fragment)]
-        prev = index + length
-      end
-
-      if prev < word.length
-        fragments << word[prev..-1]
-      end
-
-      return fragments
-    end
-
-    #
     # Enumerates over every possible mutation of the given word.
     #
     # @param [String] word
@@ -108,8 +90,20 @@ module Wordlist
     #   The original word.
     #
     def each(word)
-      explode(word).comprehension do |fragments|
-        yield fragments.join
+      matches = matches(word)
+
+      (matches.length + 1).times do |i|
+        matches.combination(i) do |indexes|
+          mutant = word.dup
+
+          indexes.each do |index,length|
+            match = mutant[index,length]
+            
+            mutant[index,length] = replace(match)
+          end
+
+          yield mutant
+        end
       end
     end
 
