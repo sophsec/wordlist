@@ -14,18 +14,13 @@ describe UniqueFilter do
     @filter.should_not include('dog')
   end
 
-  it "should only add a unique word once" do
-    (@filter << 'cat').should == true
-    (@filter << 'cat').should == false
-  end
-
   it "should only pass unique words through the filter" do
     input = ['dog', 'cat', 'dog']
     output = []
 
     input.each do |word|
-      @filter.filter(word) do |result|
-        output << result
+      if @filter.filter(word)
+        output << word
       end
     end
 

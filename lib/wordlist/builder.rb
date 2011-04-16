@@ -182,8 +182,8 @@ module Wordlist
 
       if @file
         word_combinations do |words|
-          @filter.filter(words) do |unique|
-            @file.puts unique
+          if @filter.filter(words)
+            @file.puts(words)
           end
         end
       end

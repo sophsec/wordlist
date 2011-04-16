@@ -30,17 +30,12 @@ module Wordlist
     # @param [String] word
     #   The word to mark as previously seen.
     #
-    # @return [Boolean]
-    #   Specifies whether or not the word has not been previously seen
-    #   until now.
+    # @return [UniqueFilter]
+    #   The unqiue filter.
     #
     def <<(word)
-      md5 = Digest::MD5.hexdigest(word)
-
-      return false if @checksums.include?(md5)
-
-      @checksums << md5
-      return true
+      @checksums << Digest::MD5.hexdigest(word)
+      return self
     end
 
     #
@@ -49,19 +44,15 @@ module Wordlist
     # @param [String] word
     #   The word to pass through the unique filter.
     #
-    # @yield [word]
-    #   The given block will be passed the word, if the word has not been
-    #   previously seen by the filter.
-    #
-    # @yieldparam [String] word
-    #   A unique word that has not been previously seen by the filter.
-    #
-    # @return [nil]
+    # @return [Boolean]
+    #   Specifies whether the word was unique, or previously seen.
     #
     def filter(word)
-      if self << word
-        yield word
-      end
+      md5 = Digest::MD5.hexdigest(word)
+      new_word = !@checksums.include?(md5)
+
+      @checksums << md5
+      return new_word
     end
 
     #
