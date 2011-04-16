@@ -1,4 +1,5 @@
 require 'set'
+require 'digest/md5'
 
 module Wordlist
   class UniqueFilter
@@ -10,7 +11,7 @@ module Wordlist
     # Creates a new UniqueFilter object.
     #
     def initialize
-      @seen = {}
+      @seen = Set[]
     end
 
     #
@@ -23,9 +24,7 @@ module Wordlist
     #   Specifies whether the word has been previously seen.
     #
     def seen?(word)
-      length = word.length
-
-      (@seen.has_key?(length) && @seen[length].include?(crc32(word)))
+      @seen.include?(Digest::MD5.hexdigest(word))
     end
 
     #
@@ -39,16 +38,11 @@ module Wordlist
     #   until now.
     #
     def saw!(word)
-      length = word.length
-      crc = crc32(word)
+      md5 = Digest::MD5.hexdigest(word)
 
-      if @seen.has_key?(length)
-        return false if @seen[length].include?(crc)
-        @seen[length] << crc
-      else
-        @seen[length] = SortedSet[crc]
-      end
+      return false if @seen.include?(md5)
 
+      @seen << md5
       return true
     end
 
@@ -68,10 +62,7 @@ module Wordlist
     # @return [nil]
     #
     def pass(word)
-      if saw!(word)
-        yield word
-      end
-
+      yield word if saw!(word)
       return nil
     end
 
@@ -84,28 +75,6 @@ module Wordlist
     def clear
       @seen.clear
       return self
-    end
-
-    protected
-
-    #
-    # Returns the CRC32 checksum of the given word.
-    #
-    # @param [String] word
-    #   The word to calculate a CRC32 checksum for.
-    #
-    # @return [Integer]
-    #   The CRC32 checksum for the given word.
-    #
-    def crc32(word)
-      r = 0xffffffff
-
-      word.each_byte do |b|
-        r ^= b
-        8.times { r = ((r >> 1) ^ (0xEDB88320 * (r & 1))) }
-      end
-
-      r ^ 0xffffffff
     end
 
   end
