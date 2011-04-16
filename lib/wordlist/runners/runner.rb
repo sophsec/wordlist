@@ -49,9 +49,9 @@ module Wordlist
       # @yieldparam [OptionParser] opts
       #   The option parser to be configured.
       #
-      def optparse(*args,&block)
+      def optparse(*args)
         opts = OptionParser.new
-        block.call(opts) if block
+        yield opts if block_given?
 
         begin
           opts.parse!(args)

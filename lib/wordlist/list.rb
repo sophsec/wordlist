@@ -30,7 +30,7 @@ module Wordlist
     # @yieldparam [List] list
     #   The new list object.
     #
-    def initialize(options={},&block)
+    def initialize(options={})
       @mutators = []
 
       @max_length = nil
@@ -44,7 +44,7 @@ module Wordlist
         @min_length = options[:min_length]
       end
 
-      block.call(self) if block
+      yield self if block_given?
     end
 
     #
