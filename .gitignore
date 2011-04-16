@@ -1,7 +1,8 @@
 doc
 pkg
 tmp/*
-scripts/*_wordlist.txt
+benchmarks/*_wordlist.txt
+benchmarks/text/
 .DS_Store
 .bundle
 .yardoc

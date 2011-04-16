@@ -5,14 +5,16 @@ require 'wordlist'
 require 'benchmark'
 require 'fileutils'
 
-path = File.expand_path(File.join(File.dirname(__FILE__),'shakespeare_wordlist.txt'))
+TEXT_DIR = File.expand_path(File.join(File.dirname(__FILE__),'text'))
 
+text = File.join(TEXT_DIR,'shaks12.txt')
+path = File.expand_path(File.join(File.dirname(__FILE__),'shakespeare_wordlist.txt'))
 FileUtils.rm_f(path)
 
 Benchmark.bm do |bm|
   bm.report('build') do
     Wordlist::Builder.build(path) do |wordlist|
-      wordlist.parse_file('/home/hal/shaks12.txt')
+      wordlist.parse_file(text)
     end
   end
 
