@@ -138,30 +138,33 @@ module Wordlist
     #   end
     #
     def each_mutation(&block)
-      mutation_filter = UniqueFilter.new()
+      unique = UniqueFilter.new()
 
-      mutator_stack = [lambda { |mutated_word|
-        # skip words shorter than the minimum length
-        next if mutated_word.length < @min_length
+      each_word do |word|
+        if unique.filter(word)
+          yield word
 
-        # truncate words longer than the maximum length
-        mutated_word = mutated_word[0,@max_length] if @max_length
+          # batch of mutated words
+          mutants = [word]
 
-        if mutation_filter.filter(mutated_word)
-          yield mutated_word
+          @mutators.each do |mutator|
+            # next batch of mutated words
+            new_mutants = []
+
+            mutants.each do |mutant|
+              mutator.each(mutant) do |new_mutant|
+                # only add the new mutant, if its new
+                if unique.filter(new_mutant)
+                  new_mutants << new_mutant
+                end
+              end
+            end
+
+            new_mutants.each(&block)
+            mutants += new_mutants
+          end
         end
-      }]
-
-      (@mutators.length-1).downto(0) do |index|
-        mutator_stack.unshift(lambda { |word|
-          prev_mutator = @mutators[index]
-          next_mutator = mutator_stack[index+1]
-
-          prev_mutator.each(word,&next_mutator)
-        })
       end
-
-      each_unique(&(mutator_stack.first))
     end
 
     alias each each_mutation
