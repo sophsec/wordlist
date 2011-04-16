@@ -19,15 +19,15 @@ describe Mutator do
   end
 
   it "should iterate over every possible substitution" do
-    remaining = ['lolol', 'l0lol', 'lol0l', 'l0l0l']
+    expected = ['lolol', 'l0lol', 'lol0l', 'l0l0l']
+    mutations = []
 
     mutator = Mutator.new(/o/,'0')
     mutator.each('lolol') do |mutation|
-      remaining.include?(mutation).should == true
-      remaining.delete(mutation)
+      mutations << mutation
     end
 
-    remaining.should == []
+    mutations.should == expected
   end
 
   it "should iterate over the original word, if no matches were found" do

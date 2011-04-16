@@ -1,3 +1,5 @@
+require 'combinatorics/list_comprehension'
+
 module Wordlist
   class Mutator
 
@@ -38,7 +40,7 @@ module Wordlist
     # @return [String]
     #   The mutated text.
     #
-    def replace(matched)
+    def mutate(matched)
       result = if @substitute.kind_of?(Proc)
                  @substitute.call(matched)
                else
@@ -71,32 +73,34 @@ module Wordlist
     #   The original word.
     #
     def each(word)
-      choices = 0
+      explode(word).comprehension do |fragments|
+        yield fragments.join
+      end
+    end
 
-      # first iteration
-      yield(word.gsub(@pattern) { |matched|
-        # determine how many possible choices there are
-        choices = ((choices << 1) | 0x1)
+    def explode(word)
+      match = word.match(@pattern)
 
-        replace(matched)
-      })
+      fragments = []
+      prev = 0
 
-      (choices - 1).downto(0) do |iteration|
-        bits = iteration
+      match.length.times do |n|
+        start, stop = match.offset(n)
 
-        yield(word.gsub(@pattern) { |matched|
-          result = if ((bits & 0x1) == 0x1)
-                     replace(matched)
-                   else
-                     matched
-                   end
+        if start > prev
+          fragments << word[prev, (start-prev)]
+        end
 
-          bits >>= 1
-          result
-        })
+        fragment = word[start, (stop-start)]
+        fragments << [fragment, mutate(fragment)]
+        prev = stop
       end
 
-      return word
+      if stop < word.length
+        fragments << word[stop,-1]
+      end
+
+      return fragments
     end
 
     #
