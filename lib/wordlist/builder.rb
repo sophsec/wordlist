@@ -80,7 +80,7 @@ module Wordlist
     def self.build(*arguments,&block)
       self.new(*arguments) do |builder|
         builder.open
-        builder.build!(&block)
+        builder.build(&block)
         builder.close
       end
     end
@@ -112,7 +112,12 @@ module Wordlist
     # @yield [builder]
     #   If a block is given, it will be passed the new builder object.
     #
-    def build!
+    # @yieldparam [Builder] builder
+    #   The builder object.
+    #
+    # @since 0.2.0
+    #
+    def build
       yield self if block_given?
     end
 
