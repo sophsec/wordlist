@@ -34,6 +34,17 @@ module Wordlist
       @substitute = (substitute || block)
     end
 
+    #
+    # Finds the indexes and lengths of all matched sub-strings.
+    #
+    # @param [String] word
+    #   The word to search for matches within.
+    #
+    # @return [Array<Array<index, length>>]
+    #   The Array of indexes and lengths.
+    #
+    # @since 0.2.0
+    #
     def matches(word)
       matches = []
       index = 0
