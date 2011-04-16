@@ -79,9 +79,9 @@ module Wordlist
     #
     def self.build(*arguments,&block)
       self.new(*arguments) do |builder|
-        builder.open!
+        builder.open
         builder.build!(&block)
-        builder.close!
+        builder.close
       end
     end
 
@@ -92,7 +92,7 @@ module Wordlist
     # @return [File]
     #   The open word-list file.
     #
-    def open!
+    def open
       if File.file?(@path)
         File.open(@path) do |file|
           file.each_line do |line|
@@ -233,7 +233,7 @@ module Wordlist
     #
     # Closes the word-list file.
     #
-    def close!
+    def close
       if @file
         @file.close
         @file = nil
