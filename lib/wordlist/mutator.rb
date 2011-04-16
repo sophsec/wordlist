@@ -86,10 +86,12 @@ module Wordlist
     # @yieldparam [String] mutation
     #   One possible mutation of the given word.
     #
-    # @return [String]
-    #   The original word.
+    # @return [Enumerator]
+    #   If no block is given, an `Enumerator` object will be returned.
     #
     def each(word)
+      return enum_for(:each,word) unless block_given?
+
       matches = matches(word)
 
       (matches.length + 1).times do |i|

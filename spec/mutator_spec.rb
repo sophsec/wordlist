@@ -19,35 +19,23 @@ describe Mutator do
   end
 
   it "should compensate for drift when replacing text" do
-    expected = %w[lolo l00lo lol00 l00l00]
-    mutations = []
-
     mutator = Mutator.new('o', '00')
-    mutator.each('lolo') { |mutant| mutations << mutant }
+    expected = %w[lolo l00lo lol00 l00l00]
 
-    mutations.should == expected
+    mutator.each('lolo').to_a.should == expected
   end
 
   it "should iterate over every possible substitution" do
-    expected = ['lolol', 'l0lol', 'lol0l', 'l0l0l']
-    mutations = []
-
     mutator = Mutator.new(/o/,'0')
-    mutator.each('lolol') do |mutation|
-      mutations << mutation
-    end
+    expected = %w[lolol l0lol lol0l l0l0l]
 
-    mutations.should == expected
+    mutator.each('lolol').to_a.should == expected
   end
 
   it "should iterate over the original word, if no matches were found" do
-    mutations = []
+    word = 'hello'
     mutator = Mutator.new('x','0')
 
-    mutator.each('hello') do |mutant|
-      mutations << mutant
-    end
-
-    mutations.should == ['hello']
+    mutator.each('hello').to_a.should == [word]
   end
 end
