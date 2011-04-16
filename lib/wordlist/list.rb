@@ -113,7 +113,7 @@ module Wordlist
       unique_filter = UniqueFilter.new()
 
       each_word do |word|
-        if unique_filter.saw!(word)
+        if (unique_filter << word)
           yield word
         end
       end
@@ -147,7 +147,7 @@ module Wordlist
         # truncate words longer than the maximum length
         mutated_word = mutated_word[0,@max_length] if @max_length
 
-        if mutation_filter.saw!(mutated_word)
+        if (mutation_filter << mutated_word)
           yield mutated_word
         end
       }]

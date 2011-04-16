@@ -96,7 +96,7 @@ module Wordlist
       if File.file?(@path)
         File.open(@path) do |file|
           file.each_line do |line|
-            @filter.saw!(line.chomp)
+            @filter << line.chomp
           end
         end
       end
@@ -182,7 +182,7 @@ module Wordlist
 
       if @file
         word_combinations do |words|
-          @filter.pass(words) do |unique|
+          @filter.filter(words) do |unique|
             @file.puts unique
           end
         end

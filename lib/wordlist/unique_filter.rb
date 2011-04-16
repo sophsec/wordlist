@@ -4,14 +4,11 @@ require 'digest/md5'
 module Wordlist
   class UniqueFilter
 
-    # CRC32 Hashes of words seen so far
-    attr_reader :seen
-
     #
     # Creates a new UniqueFilter object.
     #
     def initialize
-      @seen = Set[]
+      @checksums = Set[]
     end
 
     #
@@ -23,8 +20,8 @@ module Wordlist
     # @return [Boolean]
     #   Specifies whether the word has been previously seen.
     #
-    def seen?(word)
-      @seen.include?(Digest::MD5.hexdigest(word))
+    def include?(word)
+      @checksums.include?(Digest::MD5.hexdigest(word))
     end
 
     #
@@ -37,12 +34,12 @@ module Wordlist
     #   Specifies whether or not the word has not been previously seen
     #   until now.
     #
-    def saw!(word)
+    def <<(word)
       md5 = Digest::MD5.hexdigest(word)
 
-      return false if @seen.include?(md5)
+      return false if @checksums.include?(md5)
 
-      @seen << md5
+      @checksums << md5
       return true
     end
 
@@ -61,9 +58,10 @@ module Wordlist
     #
     # @return [nil]
     #
-    def pass(word)
-      yield word if saw!(word)
-      return nil
+    def filter(word)
+      if self << word
+        yield word
+      end
     end
 
     #
@@ -73,7 +71,7 @@ module Wordlist
     #   The cleared filter.
     #
     def clear
-      @seen.clear
+      @checksums.clear
       return self
     end
 

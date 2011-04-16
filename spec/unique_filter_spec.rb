@@ -7,24 +7,24 @@ describe UniqueFilter do
     @filter = UniqueFilter.new
   end
 
-  it "should have seen words" do
-    @filter.saw!('cat')
+  it "should recognize previously added words" do
+    @filter << 'cat'
 
-    @filter.seen?('cat').should == true
-    @filter.seen?('dog').should == false
+    @filter.should include('cat')
+    @filter.should_not include('dog')
   end
 
-  it "should only see a unique word once" do
-    @filter.saw!('cat').should == true
-    @filter.saw!('cat').should == false
+  it "should only add a unique word once" do
+    (@filter << 'cat').should == true
+    (@filter << 'cat').should == false
   end
 
-  it "should pass only unique words through the filter" do
+  it "should only pass unique words through the filter" do
     input = ['dog', 'cat', 'dog']
     output = []
 
     input.each do |word|
-      @filter.pass(word) do |result|
+      @filter.filter(word) do |result|
         output << result
       end
     end
