@@ -92,6 +92,8 @@ module Wordlist
     # @return [File]
     #   The open word-list file.
     #
+    # @since 0.2.0
+    #
     def open
       if File.file?(@path)
         File.open(@path) do |file|
@@ -232,6 +234,8 @@ module Wordlist
 
     #
     # Closes the word-list file.
+    #
+    # @since 0.2.0
     #
     def close
       if @file

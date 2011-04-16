@@ -65,6 +65,8 @@ module Wordlist
     # @return [Array<Array, String>]
     #   The Array of possible substitutions.
     #
+    # @since 0.2.0
+    #
     def explode(word)
       fragments = []
       prev = 0

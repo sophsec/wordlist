@@ -20,6 +20,8 @@ module Wordlist
     # @return [Boolean]
     #   Specifies whether the word has been previously seen.
     #
+    # @since 0.2.0
+    #
     def include?(word)
       @checksums.include?(Digest::MD5.hexdigest(word))
     end
@@ -32,6 +34,8 @@ module Wordlist
     #
     # @return [UniqueFilter]
     #   The unqiue filter.
+    #
+    # @since 0.2.0
     #
     def <<(word)
       @checksums << Digest::MD5.hexdigest(word)
@@ -46,6 +50,8 @@ module Wordlist
     #
     # @return [Boolean]
     #   Specifies whether the word was unique, or previously seen.
+    #
+    # @since 0.2.0
     #
     def filter(word)
       md5 = Digest::MD5.hexdigest(word)
