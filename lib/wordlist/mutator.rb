@@ -32,15 +32,15 @@ module Wordlist
     end
 
     #
-    # Mutates the given text.
+    # Replaces the given text.
     #
     # @param [String] matched
-    #   The recognized text to be mutated.
+    #   The recognized text to be replaced.
     #
     # @return [String]
-    #   The mutated text.
+    #   The replacement text.
     #
-    def mutate(matched)
+    def replace(matched)
       result = if @substitute.kind_of?(Proc)
                  @substitute.call(matched)
                else
@@ -54,6 +54,39 @@ module Wordlist
                end
 
       return result
+    end
+
+    #
+    # Explodes a word into an Array of possible substitutions.
+    #
+    # @param [String] word
+    #   The word to explode.
+    #
+    # @return [Array<Array, String>]
+    #   The Array of possible substitutions.
+    #
+    def explode(word)
+      fragments = []
+      prev = 0
+
+      word.scan(@pattern) do |match|
+        index = word.index(match,prev)
+        length = match.length
+
+        if index > prev
+          fragments << word[prev, (index-prev)]
+        end
+
+        fragment = word[index, length]
+        fragments << [fragment, replace(fragment)]
+        prev = index + length
+      end
+
+      if prev < word.length
+        fragments << word[prev..-1]
+      end
+
+      return fragments
     end
 
     #
@@ -76,31 +109,6 @@ module Wordlist
       explode(word).comprehension do |fragments|
         yield fragments.join
       end
-    end
-
-    def explode(word)
-      match = word.match(@pattern)
-
-      fragments = []
-      prev = 0
-
-      match.length.times do |n|
-        start, stop = match.offset(n)
-
-        if start > prev
-          fragments << word[prev, (start-prev)]
-        end
-
-        fragment = word[start, (stop-start)]
-        fragments << [fragment, mutate(fragment)]
-        prev = stop
-      end
-
-      if stop < word.length
-        fragments << word[stop,-1]
-      end
-
-      return fragments
     end
 
     #

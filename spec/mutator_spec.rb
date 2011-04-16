@@ -19,7 +19,7 @@ describe Mutator do
   end
 
   it "should iterate over every possible substitution" do
-    expected = ['lolol', 'l0lol', 'lol0l', 'l0l0l']
+    expected = ['lolol', 'lol0l', 'l0lol', 'l0l0l']
     mutations = []
 
     mutator = Mutator.new(/o/,'0')
