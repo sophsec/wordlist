@@ -84,6 +84,7 @@ unique word in the word-list:
 
 ## Requirements
 
+* [Ruby](http://www.ruby-lang.org) >= 1.8.7
 * [spidr](http://spidr.rubyforge.org) >= 0.1.9
 
 ## Install
