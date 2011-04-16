@@ -95,11 +95,14 @@ module Wordlist
       (matches.length + 1).times do |i|
         matches.combination(i) do |indexes|
           mutant = word.dup
+          drift = 0
 
           indexes.each do |index,length|
             match = mutant[index,length]
-            
-            mutant[index,length] = replace(match)
+            replacement = replace(match)
+
+            mutant[index + drift, length] = replacement
+            drift += (replacement.length - match.length)
           end
 
           yield mutant

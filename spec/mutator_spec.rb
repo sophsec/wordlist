@@ -18,6 +18,16 @@ describe Mutator do
     mutator.replace('o').should == 'oo'
   end
 
+  it "should compensate for drift when replacing text" do
+    expected = %w[lolo l00lo lol00 l00l00]
+    mutations = []
+
+    mutator = Mutator.new('o', '00')
+    mutator.each('lolo') { |mutant| mutations << mutant }
+
+    mutations.should == expected
+  end
+
   it "should iterate over every possible substitution" do
     expected = ['lolol', 'l0lol', 'lol0l', 'l0l0l']
     mutations = []
