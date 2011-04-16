@@ -15,7 +15,7 @@ module Wordlist
     # @param [String, Regexp] pattern
     #   The pattern which recognizes text to mutate.
     #
-    # @param [String, Integer] substitute
+    # @param [String, Integer, #call] substitute
     #   The optional text to replace recognized text.
     #
     # @yield [match]
@@ -69,7 +69,7 @@ module Wordlist
     #   The replacement text.
     #
     def replace(matched)
-      result = if @substitute.kind_of?(Proc)
+      result = if @substitute.respond_to?(:call)
                  @substitute.call(matched)
                else
                  @substitute
