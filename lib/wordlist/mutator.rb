@@ -46,14 +46,16 @@ module Wordlist
     # @since 0.2.0
     #
     def matches(word)
+      word = word.dup
       matches = []
-      index = 0
+      offset = 0
 
-      while (match = word.match(@pattern,index))
+      while (match = word.match(@pattern))
         i,j = match.offset(0)
+        matches << [offset+i, j-i]
 
-        matches << [i, j-i]
-        index = j
+        word = word.slice!(j..-1)
+        offset += j
       end
 
       return matches
