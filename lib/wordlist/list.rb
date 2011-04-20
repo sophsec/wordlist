@@ -1,10 +1,20 @@
 require 'wordlist/unique_filter'
 require 'wordlist/mutator'
 
+if RUBY_VERSION < '1.9.'
+  require 'generator'
+end
+
 module Wordlist
   class List
 
     include Enumerable
+
+    Generator = if RUBY_VERSION < '1.9.'
+                  ::Generator
+                else
+                  Enumerator::Generator
+                end
 
     # Maximum length of words
     attr_accessor :max_length
@@ -27,13 +37,19 @@ module Wordlist
     # @option options [Hash{String,Regexp => Integer,String,#call}] :mutations
     #   The mutation rules for the list.
     #
-    # @yield [list]
-    #   If a block is given, it will be passed the new list object.
+    # @option options [#each] :words
+    #   The words for the list.
     #
-    # @yieldparam [List] list
-    #   The new list object.
+    # @yield [generator]
+    #   The given block will be passed a generator to populate with words.
     #
-    def initialize(options={})
+    # @yieldparam [Generator] generator
+    #   The generator to populate with words.
+    #
+    # @raise [ArgumentError]
+    #   The `:words` option or a block must be specified.
+    #
+    def initialize(options={},&block)
       @mutators = []
 
       @max_length = nil
@@ -53,7 +69,13 @@ module Wordlist
         end
       end
 
-      yield(self) if block_given?
+      @words = if block
+                 Generator.new(&block)
+               elsif options.has_key?(:words)
+                 options[:words]
+               else
+                 raise(ArgumentError,"must specify :words or a block")
+               end
     end
 
     #
@@ -102,6 +124,7 @@ module Wordlist
     #   end
     #
     def each_word(&block)
+      @words.each(&block)
     end
 
     #

@@ -15,30 +15,14 @@ module Wordlist
     # @param [Hash] options
     #   Additional options.
     #
-    def initialize(path,options={},&block)
+    def initialize(path,options={})
       @path = path
 
-      super(options,&block)
-    end
-
-    #
-    # Enumerates through every word in the flat-file.
-    #
-    # @yield [word]
-    #   The given block will be passed every word from the word-list.
-    #
-    # @yieldparam [String] word
-    #   A word from the word-list.
-    #
-    # @example
-    #   flat_file.each_word do |word|
-    #     puts word
-    #   end
-    #
-    def each_word(&block)
-      File.open(@path) do |file|
-        file.each_line do |line|
-          yield line.chomp
+      super(options) do |list|
+        File.open(@path) do |file|
+          file.each_line do |line|
+            list.yield line.chomp
+          end
         end
       end
     end

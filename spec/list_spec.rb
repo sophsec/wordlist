@@ -1,11 +1,12 @@
-require 'wordlist/list'
-
 require 'spec_helper'
-require 'classes/test_list'
+require 'wordlist/list'
 
 describe List do
   before(:all) do
-    @source = TestList.new
+    @source = described_class.new do |list|
+      list.yield 'omg.hackers'
+    end
+
     @source.mutate 'o', '0'
     @source.mutate 'a', 'A'
     @source.mutate 'e', '3'
