@@ -44,7 +44,7 @@ module Wordlist
         @min_length = options[:min_length]
       end
 
-      yield self if block_given?
+      yield(self) if block_given?
     end
 
     #
