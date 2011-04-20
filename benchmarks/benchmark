@@ -51,6 +51,10 @@ end
 Benchmark.bm do |bm|
   mutator = Wordlist::Mutator.new(/o/i, '0')
 
+  bm.report('Mutator#matches') do
+    mutator.matches('lololololoLOLOLOLOLO')
+  end
+
   bm.report('Mutator#each') do
     mutator.each('lololololoLOLOLOLOLO') { |word| }
   end
