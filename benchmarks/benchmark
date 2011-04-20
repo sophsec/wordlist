@@ -19,36 +19,32 @@ Benchmark.bm do |bm|
   end
 
   bm.report('each_unique') do
-    Wordlist::FlatFile.new(path) do |wordlist|
-      wordlist.each_unique { |word| word }
-    end
+    list = Wordlist::FlatFile.new(path)
+    list.each_unique { |word| word }
   end
 
   bm.report('each_mutation (1)') do
-    Wordlist::FlatFile.new(path) do |wordlist|
-      wordlist.mutate /o/i, '0'
+    list = Wordlist::FlatFile.new(path)
+    list.mutate /o/i, '0'
 
-      wordlist.each_mutation { |word| word }
-    end
+    list.each_mutation { |word| word }
   end
 
   bm.report('each_mutation (2)') do
-    Wordlist::FlatFile.new(path) do |wordlist|
-      wordlist.mutate /o/i, '0'
-      wordlist.mutate /a/i, '@'
+    list = Wordlist::FlatFile.new(path)
+    list.mutate /o/i, '0'
+    list.mutate /a/i, '@'
 
-      wordlist.each_mutation { |word| word }
-    end
+    list.each_mutation { |word| word }
   end
 
   bm.report('each_mutation (3)') do
-    Wordlist::FlatFile.new(path) do |wordlist|
-      wordlist.mutate /o/i, '0'
-      wordlist.mutate /a/i, '@'
-      wordlist.mutate /e/i, '3'
+    list = Wordlist::FlatFile.new(path)
+    list.mutate /o/i, '0'
+    list.mutate /a/i, '@'
+    list.mutate /e/i, '3'
 
-      wordlist.each_mutation { |word| word }
-    end
+    list.each_mutation { |word| word }
   end
 end
 
