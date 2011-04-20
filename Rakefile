@@ -34,21 +34,23 @@ rescue LoadError => e
   end
 end
 
-namespace :benchmarks do
-  task :download do
-    require 'net/http'
-    require 'uri'
+file 'benchmarks/text/shaks12.txt' do
+  require 'net/http'
+  require 'uri'
 
-    url = URI('http://www.gutenberg.org/dirs/etext94/shaks12.txt')
+  url = URI('http://www.gutenberg.org/dirs/etext94/shaks12.txt')
 
-    File.open(File.join('benchmarks','text','shaks12.txt'),'w') do |file|
-      Net::HTTP.get_response(url) do |response|
-        response.read_body { |chunk| file << chunk }
-      end
+  File.open(File.join('benchmarks','text','shaks12.txt'),'w') do |file|
+    puts ">>> Downloading shaks12.txt ..."
+
+    Net::HTTP.get_response(url) do |response|
+      response.read_body { |chunk| file << chunk }
     end
+
+    puts ">>> Downloaded shaks12.txt."
   end
 end
 
-task :benchmarks do
+task :benchmarks => 'benchmarks/text/shaks12.txt' do
   ruby File.join('benchmarks/benchmark')
 end
