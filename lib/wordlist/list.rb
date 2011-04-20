@@ -24,6 +24,9 @@ module Wordlist
     # @option options [Integer] :min_length
     #   The minimum length of words produced by the list.
     #
+    # @option options [Hash{String,Regexp => Integer,String,#call}] :mutations
+    #   The mutation rules for the list.
+    #
     # @yield [list]
     #   If a block is given, it will be passed the new list object.
     #
@@ -42,6 +45,12 @@ module Wordlist
 
       if options[:min_length]
         @min_length = options[:min_length]
+      end
+
+      if options[:mutations]
+        options[:mutations].each do |pattern,substitute|
+          mutate(pattern,substitute)
+        end
       end
 
       yield(self) if block_given?
